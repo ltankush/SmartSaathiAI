@@ -42,4 +42,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
     CMD curl -f http://localhost:${PORT:-8000}/api/health || exit 1
 
 # Keep runtime startup identical across Docker and Heroku Procfile.
-CMD uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1"]

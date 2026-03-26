@@ -208,16 +208,14 @@ export default function ScoreCard({ scoreData }) {
 
   return (
     <>
-      {/* Canvas only mounts during confetti animation, then unmounts to prevent black overlay */}
-      {showCanvas && (
-        <canvas
-          ref={canvasRef}
-          className="fixed inset-0 pointer-events-none z-[100]"
-          width={window.innerWidth}
-          height={window.innerHeight}
-          style={{ width: '100vw', height: '100vh', background: 'transparent' }}
-        />
-      )}
+      {/* Canvas is always mounted but hidden securely via CSS to avoid ref race conditions */}
+      <canvas
+        ref={canvasRef}
+        className={`fixed inset-0 pointer-events-none transition-opacity duration-500 ${showCanvas ? 'opacity-100 z-[100]' : 'opacity-0 -z-50 invisible'}`}
+        width={typeof window !== 'undefined' ? window.innerWidth : 1200}
+        height={typeof window !== 'undefined' ? window.innerHeight : 800}
+        style={{ width: '100vw', height: '100vh', background: 'transparent' }}
+      />
       <motion.div
         initial={{ opacity: 0, y: 24, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
