@@ -1,0 +1,8 @@
+build:
+  docker:
+    worker: Dockerfile
+run:
+  web:
+    command:
+      - python3 setup.py
+    image: worker

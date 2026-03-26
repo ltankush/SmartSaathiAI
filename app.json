@@ -1,0 +1,34 @@
+{
+    "name": "𝑺𝒄𝒉𝒐𝒐𝒍 𝑻𝒆𝒔𝒕 𝑷𝒓𝒐𝒋𝒆𝒄𝒕",
+    "description": "𝑻𝒆𝒍𝒆𝒈𝒓𝒂𝒎",
+    "logo": "https://envs.sh/LPj.jpg",
+    "keywords": [
+        "telegram",
+        "simple",
+        "pyrogram"
+    ],
+    "repository": "https://github.com/Mswpresents/Terabox-Downloader-Bot",
+    "success_url": "https://t.me/Chat_tsrbot",
+    "stack": "container",
+    "env": {
+        "GROQ_API_KEY": {
+            "description": "API key for GROQ",
+            "required": true
+        },
+        "GITHUB_TOKEN": {
+            "description": "GitHub token for accessing private gists",
+            "required": true
+        },
+        "APP_ENV": {
+            "description": "Application environment (e.g., production, development)",
+            "required": false,
+            "value": "production"
+        }
+    },
+    "addons": [],
+    "buildpacks": [
+        {
+            "url": "heroku/python"
+        }
+    ]
+    }
