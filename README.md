@@ -175,9 +175,9 @@ SmartSaathiAI/
     ├── package.json
     ├── Dockerfile
     ├── nginx.conf
+    ├── index.html
     │
     ├── public/
-    │   ├── index.html
     │   └── manifest.json       ← PWA manifest
     │
     └── src/
