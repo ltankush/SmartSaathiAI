@@ -34,12 +34,12 @@ COPY backend/ ./
 # Copy built frontend into a static folder the backend will serve
 COPY --from=frontend-builder /app/frontend/dist ./static_frontend
 
-# Expose port
+# Expose default port (Heroku overrides this with $PORT at runtime)
 EXPOSE 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-    CMD curl -f http://localhost:8000/api/health || exit 1
+    CMD curl -f http://localhost:${PORT:-8000}/api/health || exit 1
 
-# Start server
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+# Use shell form (not exec form) so $PORT env variable gets expanded by Heroku
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1

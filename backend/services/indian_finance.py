@@ -224,6 +224,7 @@ def fire_planner(
 
 def calc_bms_score(
     monthly_income: float,
+    monthly_expenses: float,
     emergency_months: float,
     has_health_insurance: bool,
     health_cover_lakhs: float,
