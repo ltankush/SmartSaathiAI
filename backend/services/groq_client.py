@@ -90,8 +90,6 @@ class GroqClient:
                 data = await response.json()
                 return data["choices"][0]["message"]["content"]
 
-<<<<<<< HEAD
-=======
     async def chat_with_tools(
         self,
         messages: list[dict],
@@ -128,7 +126,6 @@ class GroqClient:
                 data = await response.json()
                 return data["choices"][0]["message"]
 
->>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
     async def transcribe_audio(self, audio_bytes: bytes, filename: str = "audio.webm") -> str:
         form_data = aiohttp.FormData()
         form_data.add_field("file", audio_bytes, filename=filename, content_type="audio/webm")

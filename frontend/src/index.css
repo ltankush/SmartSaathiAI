@@ -2,11 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-<<<<<<< HEAD
-=======
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
->>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
 @layer base {
   :root {
     --brand: #13b88e;
@@ -66,8 +63,6 @@
     color: #fff;
     border: none;
     box-shadow: 0 4px 15px rgba(19,184,142,0.3);
-<<<<<<< HEAD
-=======
     position: relative;
     overflow: hidden;
   }
@@ -80,7 +75,6 @@
   }
   .btn-primary:hover::before {
     left: 100%;
->>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
   }
   .btn-primary:hover {
     transform: translateY(-1px);
@@ -117,10 +111,7 @@
     @apply rounded-2xl p-6;
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.06);
-<<<<<<< HEAD
-=======
     transition: border-color 0.3s ease;
->>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
   }
 
   .card-glow {
@@ -186,8 +177,6 @@ input[type='range']::-webkit-slider-thumb:hover { transform: scale(1.2); }
   50% { opacity: 0; }
 }
 
-<<<<<<< HEAD
-=======
 /* Keyframe animations */
 @keyframes gradient {
   0%, 100% { background-position: 0% 50%; }
@@ -209,7 +198,6 @@ input[type='range']::-webkit-slider-thumb:hover { transform: scale(1.2); }
   50% { box-shadow: 0 0 40px rgba(19,184,142,0.6); }
 }
 
->>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
 /* Markdown in chat */
 .prose-chat h1, .prose-chat h2, .prose-chat h3 {
   color: #e6edf3;
@@ -229,32 +217,10 @@ input[type='range']::-webkit-slider-thumb:hover { transform: scale(1.2); }
 .page-enter { opacity: 0; transform: translateY(12px); }
 .page-enter-active { opacity: 1; transform: translateY(0); transition: all 0.4s ease; }
 
-/* 3D card tilt effect */
-.tilt-card {
-  transform-style: preserve-3d;
-  transition: transform 0.1s ease;
-}
-
-/* Noise texture overlay */
-.noise::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  border-radius: inherit;
-  opacity: 0.4;
-}
-<<<<<<< HEAD
-=======
-
-/* Scrollbar thin */
 .scrollbar-thin::-webkit-scrollbar { width: 4px; }
 .scrollbar-thin::-webkit-scrollbar-thumb { background: #21262d; border-radius: 2px; }
 
-/* Print styles for PDF context */
 @media print {
   body { background: white !important; color: black !important; }
   .no-print { display: none !important; }
 }
->>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
