@@ -1,49 +1,76 @@
 # SmartSaathiAI 🇮🇳
 
-> **India's AI-powered personal finance mentor** — Built for the ET GenAI Hackathon 2026
+> **India's Agentic AI Personal Finance Mentor** — Built for the ET GenAI Hackathon 2026
 
-SmartSaathiAI is a full-stack web application that gives every Indian access to a personalised financial advisor — completely free. It covers the Bharat Money Score, FIRE Path Planning, Tax Regime Optimization, and an AI chat mentor that speaks Hinglish.
+SmartSaathiAI is a full-stack agentic AI web application that gives every Indian access to a personalised financial advisor — completely free. Unlike traditional chatbots, it uses **real-time function calling** to execute actual financial calculations and return exact numbers, explained in friendly Hinglish.
 
 ---
 
-## What It Does
+## 🏆 What Makes It Different: Agentic AI
+
+```
+User: "Meri salary 12 lakh hai, kaunsa tax regime better?"
+
+SmartSaathi THINKS → calls compare_tax_regimes(gross=1200000)
+                   → gets REAL calculated numbers
+                   → responds: "New regime mein ₹14,400 bachega. Here's why..."
+```
+
+The AI doesn't guess — it **calls real Python functions**, gets exact results, and explains them in simple Hinglish.
+
+---
+
+## ✨ Features (6 Tools + AI Chat)
 
 | Feature | Description |
 |---|---|
-| **Bharat Money Score (BMS)** | 12 questions → score across 6 dimensions (Emergency, Insurance, Investments, Debt, Tax, Retirement). AI-generated personalised summary + Govt scheme matcher. |
-| **FIRE Path Planner** | Age + income → month-by-month roadmap with SIP amounts, PPF/NPS/ELSS allocation, and corpus milestones. Interactive Chart.js timeline. |
-| **Tax Regime Optimizer** | Old vs New regime compared with exact numbers. Identifies every missed deduction. AI recommends action items. FY 2025-26. |
-| **AI Money Mentor (Chat)** | SSE-streamed AI chat. Speaks Hinglish. Voice input via Groq Whisper. Contextual — knows your BMS score. |
+| **Bharat Money Score (BMS)** | 12 questions → score across 6 dimensions. AI summary + Govt scheme matcher. PDF report with watermark & disclaimer. |
+| **FIRE Path Planner** | Age + income → roadmap with SIP amounts, PPF/NPS/ELSS allocation, and corpus milestones. Interactive Chart.js timeline. |
+| **Tax Regime Optimizer** | Old vs New regime compared with exact numbers. Identifies every missed deduction. FY 2025-26. |
+| **Goal-Based Planner** | Plan for house, car, education with preset goals. Exact monthly SIP per goal. Combined timeline chart. |
+| **Spending Analyzer** | 10-category spending breakdown. 50/30/20 rule check. AI-powered spending audit. |
+| **AI Money Mentor (Chat)** | SSE-streamed agentic chat. 5 real calculation tools. Voice input via Groq Whisper. Speaks Hinglish. |
+
+### Additional Features
+- 📄 **PDF Report Generation** — with SmartSaathiAI watermark and legal disclaimer
+- 🎊 **Animated Score Reveal** — confetti for high scores, shake for low
+- 🌐 **4 Languages** — English, Hindi, Tamil, Bengali
+- 📱 **PWA Ready** — installable, works offline after first load
+- 📲 **WhatsApp Share** — share BMS score with friends
+- 💡 **Financial Tips Carousel** — season-aware tips on home page
+- 📈 **MF/ETF Recommendations** — curated Indian fund data
+- 🎨 **3D Three.js Orb** — animated hero with particle ring
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 ### Backend
 - **FastAPI** — async Python web framework
 - **aiohttp** — all external HTTP calls (no requests, no httpx)
-- **Groq API** — LLM (Llama 3.3 70B + Llama 4 Scout) + Whisper STT
+- **Groq API** — LLM function calling (Llama 3.3 70B) + Whisper STT
+- **ReportLab** — server-side PDF generation with watermark
 - **GitHub Gist** — free, private, forever JSON database
 - **SSE (Server-Sent Events)** — real-time streaming AI responses
-- **Pydantic v2** — data validation
 
 ### Frontend
 - **React 18** + **Vite** — lightning-fast dev + build
 - **Three.js** + **@react-three/fiber** — 3D animated hero orb
-- **Framer Motion** — page transitions and animations
+- **Framer Motion** — page transitions, micro-animations, confetti
 - **Tailwind CSS** — utility-first styling
-- **Chart.js** + **react-chartjs-2** — financial charts
+- **Chart.js** — Line, Bar, Doughnut charts
 - **Zustand** — global state with localStorage persistence
-- **React Router v6** — SPA routing
+- **React Router v6** — SPA routing (7 pages)
+- **4-language i18n** — EN/HI/TA/BN
 
 ### Infrastructure
 - **Docker + Docker Compose** — one-command deployment
 - **Nginx** — frontend serving + API proxy
-- **Heroku ready** — Procfile + runtime.txt included
+- **Heroku + Vercel ready** — free cloud hosting
 
 ---
 
-## Quick Start (Recommended)
+## 🚀 Quick Start
 
 ### Prerequisites
 - Python 3.10+
@@ -76,7 +103,7 @@ python setup.py
 
 This automatically:
 - Creates Python virtual environment
-- Installs all Python packages
+- Installs all Python packages (including ReportLab)
 - Installs all Node packages
 - Creates your private GitHub Gist database
 - Starts the backend on `localhost:8000`
@@ -92,194 +119,97 @@ python setup.py --build   # Docker build + run (requires Docker)
 
 ---
 
-## Docker Deployment
+## 📐 Architecture
 
-```bash
-# Make sure backend/.env is configured, then:
-python setup.py --build
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the full agent architecture document with diagrams.
 
-# Or manually:
-docker compose up --build
-```
-
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API Docs: http://localhost:8000/api/docs
+Key highlights:
+- **9 specialized agents** (Chat, Score, Planner, Tax, Goals, Spending, Report, Voice, Session)
+- **Agentic tool-use** — LLM calls 5 real Python financial functions
+- **Fallback chain** — tool call → regular streaming → error message
+- **Zero PII** — only numeric financial data stored
 
 ---
 
-## Heroku Deployment
+## 📊 Impact Model
 
-[![Deploy To Heroku](https://www.herokucdn.com/deploy/button.svg)](https://dashboard.heroku.com/new?template=https://github.com/ltankush/SmartSaathiAI)
+See [IMPACT_MODEL.md](IMPACT_MODEL.md) for the full quantified impact analysis.
 
-### Backend
-
-```bash
-cd backend
-heroku create smartsaathi-api
-heroku config:set GROQ_API_KEY=your_key
-heroku config:set GITHUB_TOKEN=your_token
-heroku config:set GITHUB_GIST_ID=your_gist_id
-heroku config:set APP_ENV=production
-heroku config:set CORS_ORIGINS=https://your-frontend-url.com
-git subtree push --prefix backend heroku main
-```
-
-### Frontend (Vercel — free)
-
-```bash
-cd frontend
-npm run build
-# Deploy /frontend to Vercel or Netlify
-# Set VITE_API_URL to your Heroku backend URL
-```
+| Impact | Year 1 (1L users) |
+|---|---|
+| Advisor cost saved | ₹250 Crore |
+| Tax savings found | ₹96 Crore |
+| Time saved vs advisor | 97.5% |
+| Infrastructure cost | ₹0 |
 
 ---
 
-## Project Structure
+## 🎥 3-Minute Demo Script
 
-```
-SmartSaathiAI/
-│
-├── setup.py                    ← One-command setup & launch
-├── docker-compose.yml          ← Docker orchestration
-├── .gitignore
-├── README.md
-│
-├── backend/
-│   ├── main.py                 ← FastAPI app entry point
-│   ├── config.py               ← Settings from .env
-│   ├── requirements.txt
-│   ├── Dockerfile
-│   ├── Procfile                ← Heroku
-│   ├── runtime.txt             ← Python 3.12
-│   ├── .env                    ← Your secrets (never commit!)
-│   ├── .env.example            ← Template
-│   │
-│   ├── services/
-│   │   ├── groq_client.py      ← aiohttp Groq API client
-│   │   ├── gist_client.py      ← aiohttp GitHub Gist client
-│   │   └── indian_finance.py   ← All Indian finance math
-│   │
-│   └── api/
-│       ├── chat.py             ← SSE streaming chat
-│       ├── score.py            ← Bharat Money Score
-│       ├── planner.py          ← FIRE planner
-│       ├── tax.py              ← Tax optimizer
-│       ├── voice.py            ← Whisper STT
-│       └── session.py          ← Gist session management
-│
-└── frontend/
-    ├── vite.config.js
-    ├── tailwind.config.js
-    ├── package.json
-    ├── Dockerfile
-    ├── nginx.conf
-    ├── index.html
-    │
-    ├── public/
-    │   └── manifest.json       ← PWA manifest
-    │
-    └── src/
-        ├── main.jsx
-        ├── App.jsx
-        ├── index.css
-        │
-        ├── store/
-        │   └── index.js        ← Zustand store
-        │
-        ├── utils/
-        │   └── api.js          ← Axios + SSE client
-        │
-        ├── hooks/
-        │   └── useVoiceRecorder.js
-        │
-        ├── components/
-        │   ├── Navbar.jsx
-        │   ├── HeroOrb.jsx     ← Three.js 3D sphere
-        │   ├── ScoreCard.jsx   ← Animated BMS score
-        │   ├── PageWrapper.jsx
-        │   ├── FormComponents.jsx
-        │   └── UI.jsx
-        │
-        └── pages/
-            ├── Home.jsx
-            ├── Score.jsx
-            ├── Planner.jsx
-            ├── Tax.jsx
-            └── Chat.jsx
-```
+1. **Hero page** — 3D orb + "India ka apna AI Money Mentor" (2s)
+2. **BMS Score** — Fill sample data → animated score reveal → confetti (20s)
+3. **Download PDF** — Click → instant PDF with watermark & disclaimer (5s)
+4. **Agentic Chat** — Voice: "Meri salary 10 lakh, kaunsa regime better?" → AI calls tax tool → real numbers (25s)
+5. **FIRE Planner** — Interactive chart with milestone timeline (15s)
+6. **Goal Planner** — Add house + education → combined SIP calculation (15s)
+7. **Spending Analyzer** — Doughnut chart + 50/30/20 rule check (15s)
+8. **Language Switch** — Switch to Hindi → UI updates (5s)
+9. **Impact slide** — "133 crore Indians need this. It costs ₹0." (10s)
+10. **Architecture** — Show agentic tool-use diagram (10s)
 
 ---
 
-## API Reference
+## 🔌 API Reference
 
-All endpoints are at `/api/...`. Interactive docs at `http://localhost:8000/api/docs`.
+All endpoints at `/api/...`. Interactive docs: `http://localhost:8000/api/docs`
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/api/chat` | SSE streaming AI chat |
+| `POST` | `/api/chat` | Agentic SSE streaming AI chat (5 tools) |
 | `POST` | `/api/score` | Calculate Bharat Money Score |
 | `POST` | `/api/planner` | Generate FIRE plan |
 | `POST` | `/api/tax` | Compare tax regimes |
+| `POST` | `/api/goals` | Goal-based planner |
+| `POST` | `/api/spending` | Spending analyzer |
+| `POST` | `/api/report/bms` | Generate PDF report |
 | `POST` | `/api/voice/stt` | Whisper speech-to-text |
 | `POST` | `/api/session/create` | Create session |
 | `GET` | `/api/session/{id}` | Get session |
-| `PUT` | `/api/session/{id}` | Update session |
 | `GET` | `/api/health` | Health check |
+
+---
+
+## 🇮🇳 Indian Finance Features
+
+- **Tax slabs** — FY 2025-26 Old and New regime (exact)
+- **Instruments** — PPF (7.1%), NPS, ELSS, EPF, HRA, LTA
+- **Deductions** — 80C, 80D, 80CCD(1B), 24(b), standard deduction
+- **FIRE math** — corpus = 25× annual expenses (4% rule for India)
+- **Inflation** — default 6% (India CPI historical avg)
+- **Govt schemes** — APY, PMJSBY, PMJJBY, Mudra, SSY, PM Kisan, SCSS
+- **MF recommendations** — top index funds, ELSS, NPS fund managers
+- **SIP calculator** — monthly compounding with exact formula
 
 ---
 
 ## Groq Models Used
 
-| Model | Use case | Free limit |
+| Model | Use Case | Free Limit |
 |---|---|---|
-| `llama-3.3-70b-versatile` | Main AI mentor (chat) | 1K RPD, 100K TPD |
-| `meta-llama/llama-4-scout-17b-16e-instruct` | Score/Planner/Tax summaries | 1K RPD, 500K TPD |
-| `whisper-large-v3` | Voice to text | 2K RPD |
-| `moonshotai/kimi-k2-instruct` | Fallback | 1K RPD, 300K TPD |
+| `llama-3.3-70b-versatile` | Agentic chat (function calling + stream) | 1K RPD |
+| `llama-4-scout-17b-16e` | Score/Planner/Tax/Goals/Spending summaries | 1K RPD |
+| `whisper-large-v3` | Voice to text (Hindi + English) | 2K RPD |
 
 ---
 
-## Indian Finance Features
+## Submission Checklist
 
-- **Tax slabs** — FY 2025-26 Old and New regime (exact)
-- **Instruments** — PPF (7.1%), NPS, ELSS, EPF, HRA, LTA
-- **Deductions** — 80C, 80D, 80CCD(1B), 24(b), standard deduction
-- **FIRE math** — corpus = 25× annual expenses (4% rule adapted for India)
-- **Inflation** — default 6% (India CPI historical avg)
-- **Govt schemes** — APY, PMJSBY, PMJJBY, Mudra, SSY, PM Kisan, SCSS
-- **SIP calculator** — monthly compounding with exact formula
-
----
-
-## What Makes It Unique
-
-1. **Voice in Hinglish** — Speak your salary in Hindi, Whisper transcribes it
-2. **Zero login** — Session UUID in browser localStorage, data in private Gist
-3. **India-first math** — Every calculation uses real Indian tax law, not generic finance
-4. **Sarkari Yojana matcher** — Auto-detects which govt schemes you qualify for
-5. **Streaming AI** — Groq's fast inference, token-by-token, feels instant on mobile
-6. **3D visual** — Three.js animated orb that runs smooth on mid-range Android phones
-7. **PWA ready** — Installable, works on 2G after first load
-
----
-
-## Impact Model (Submission Requirement)
-
-- **TAM**: 95% of 140 crore Indians = ~133 crore people without a financial plan
-- **Advisor cost saved**: ₹25,000/year per user × 1 lakh users = ₹250 Cr/year saved
-- **Tax savings found**: avg ₹8,000/user who optimizes regime × 1 lakh users = ₹80 Cr
-- **Time saved**: 5 minutes vs 3–4 hours with a human advisor = 99.7% reduction
-- **Infrastructure cost**: ₹0 (Groq free tier + GitHub Gist)
-
----
-
-## Submission Details
-
-- **GitHub**: All source code with commit history
-- **Architecture**: FastAPI (async Python) ↔ Groq API + GitHub Gist ↔ React + Three.js
-- **Demo**: `python setup.py` → live in 2 minutes
+- [x] **GitHub Repository** — Public repo with full source code
+- [x] **README** — Clear setup instructions + architecture summary
+- [x] **Commit History** — Shows build process
+- [x] **Architecture Document** — Agent roles, tool integrations, error handling
+- [x] **Impact Model** — Quantified estimates with assumptions
+- [x] **Demo Script** — 3-minute pitch video guide
 
 ---
 
@@ -289,6 +219,6 @@ MIT — Free to use, modify, and distribute.
 
 ---
 
-*SmartSaathiAI — ET GenAI Hackathon 2026 · Powered by Groq + Llama + FastAPI*
+*SmartSaathiAI v2.0 — ET GenAI Hackathon 2026 · Powered by Groq + Llama + FastAPI*
 
 *Investments mein risk hota hai. Past returns guarantee nahi dete. Always consult a SEBI-registered advisor for large financial decisions.*

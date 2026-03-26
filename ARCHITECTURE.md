@@ -1,122 +1,156 @@
 # SmartSaathiAI — Architecture Document
 
+> **ET GenAI Hackathon 2026** | Agentic Multi-Tool AI Financial Mentor for India
+
 ## System Overview
 
-SmartSaathiAI is a two-service system: a Python FastAPI backend and a React frontend, communicating via REST and Server-Sent Events (SSE). All AI inference is handled by Groq's API. All persistence is handled by GitHub Gist (private, free).
+SmartSaathiAI is a **two-service agentic AI system**: a Python FastAPI backend with tool-calling capabilities and a React frontend with 3D visuals, communicating via REST and Server-Sent Events (SSE). All AI inference is handled by Groq's API with function calling. All persistence is handled by GitHub Gist (private, free).
 
 ---
 
-## Agent Architecture
+## Agentic Architecture
 
 ```
 User (Browser)
      │
      ▼
-React Frontend (Vite + Three.js + Framer Motion)
+React Frontend (Vite + Three.js + Framer Motion + Chart.js)
      │  REST + SSE
      ▼
-FastAPI Backend (Python + aiohttp)
+FastAPI Backend (Python + aiohttp + async)
      │
-     ├─── Chat Agent ──────────────► Groq: llama-3.3-70b-versatile (SSE stream)
+     ├─── AGENTIC CHAT ──────────────► Groq: llama-3.3-70b (function calling)
+     │         │                          │
+     │         ├── Tool: compare_tax() ◄──┘ (loops back with results)
+     │         ├── Tool: fire_planner()
+     │         ├── Tool: calc_sip()
+     │         ├── Tool: calc_bms_score()
+     │         └── Tool: match_schemes()
      │
-     ├─── Score Agent ─────────────► indian_finance.py (pure Python math)
-     │         └───────────────────► Groq: llama-4-scout (summary, fast)
-     │
-     ├─── Planner Agent ───────────► indian_finance.py (FIRE calculations)
-     │         └───────────────────► Groq: llama-4-scout (narrative)
-     │
-     ├─── Tax Agent ───────────────► indian_finance.py (slab calculations)
-     │         └───────────────────► Groq: llama-4-scout (advice)
-     │
+     ├─── Score Agent ─────────────► indian_finance.py + Groq (summary)
+     ├─── Planner Agent ───────────► indian_finance.py + Groq (narrative)
+     ├─── Tax Agent ───────────────► indian_finance.py + Groq (advice)
+     ├─── Goal Agent ──────────────► calc_sip() + Groq (strategy)
+     ├─── Spending Agent ──────────► 50/30/20 analysis + Groq (audit)
+     ├─── Report Agent ────────────► ReportLab → PDF (watermark + disclaimer)
      ├─── Voice Agent ─────────────► Groq: whisper-large-v3 (STT)
-     │
-     └─── Session Agent ───────────► GitHub Gist API (private JSON store)
+     └─── Session Agent ───────────► GitHub Gist API (private JSON)
 ```
 
 ---
 
-## Agent Roles
+## Agentic Tool-Use Flow (Key Innovation)
 
-### 1. Chat Agent (`api/chat.py`)
-- **Input**: conversation history, user financial context
-- **Output**: SSE token stream
-- **Model**: `llama-3.3-70b-versatile` — highest reasoning quality on free tier
-- **System prompt**: Hinglish persona, India-specific financial knowledge, actionable advice
-- **Error handling**: falls back to next token gracefully, sends error event on failure
+```
+User: "Meri salary 12 lakh hai, kaunsa regime better?"
+                    │
+                    ▼
+          ┌─────────────────┐
+          │  System Prompt   │
+          │  (Hinglish +     │
+          │   tool defs)     │
+          └────────┬────────┘
+                   │
+                   ▼
+     ┌──────────────────────────┐
+     │   Groq LLM (Llama 3.3)  │
+     │   Decides: use tool      │
+     │   compare_tax_regimes()  │
+     └───────────┬──────────────┘
+                 │ tool_call
+                 ▼
+     ┌──────────────────────────┐
+     │   Backend executes       │
+     │   indian_finance.py      │
+     │   Real Python math!      │
+     └───────────┬──────────────┘
+                 │ tool_result (JSON)
+                 ▼
+     ┌──────────────────────────┐
+     │   Groq LLM (Round 2)    │
+     │   Generates Hinglish     │
+     │   response with REAL     │
+     │   calculated numbers     │
+     └───────────┬──────────────┘
+                 │ SSE stream
+                 ▼
+          Browser (token-by-token)
+```
 
-### 2. Score Agent (`api/score.py` + `services/indian_finance.py`)
+**5 registered tools:**
+
+| Tool | Function | Description |
+|---|---|---|
+| `compare_tax_regimes` | Exact FY 2025-26 tax slabs | Old vs New with deductions |
+| `fire_planner` | FIRE corpus + SIP calculation | 25× rule, inflation-adjusted |
+| `calculate_sip` | SIP maturity projection | Monthly compound interest |
+| `calculate_bms_score` | 6-dimension financial health | Weighted scoring |
+| `match_govt_schemes` | Age/eligibility based filter | 7 major govt schemes |
+
+---
+
+## Agent Roles (9 Agents)
+
+### 1. Agentic Chat Agent (`api/chat.py`)
+- **Input**: conversation history + user context + 5 tool definitions
+- **Output**: SSE token stream with real calculated data
+- **Model**: `llama-3.3-70b-versatile` with function calling
+- **Fallback**: Regular streaming if tool calling fails
+
+### 2. Score Agent (`api/score.py`)
 - **Input**: 12 financial profile fields
-- **Output**: 6-dimension score (0–100 each), tier classification, AI summary, Govt schemes
-- **Logic**: Weighted formula across Emergency, Insurance, Investments, Debt, Tax, Retirement
-- **AI layer**: Llama 4 Scout generates a personalised 3-sentence Hinglish summary
-- **Govt scheme matcher**: Rule-based age/eligibility filter for 7 major schemes
+- **Output**: 6-dimension score (0–100), tier, AI summary, govt schemes
+- **Logic**: Weighted formula across Emergency/Insurance/Investments/Debt/Tax/Retirement
 
 ### 3. Planner Agent (`api/planner.py`)
 - **Input**: age, income, expenses, savings, target FIRE age
-- **Output**: FIRE corpus, monthly SIP, allocation breakdown, milestone timeline
-- **Math**: Future value compounding, inflation-adjusted corpus (25× rule)
-- **Allocation**: 60% Nifty 50 ETF / 20% PPF / 20% NPS (India-optimised)
+- **Output**: FIRE corpus, monthly SIP, allocation breakdown, milestones
 
 ### 4. Tax Agent (`api/tax.py`)
-- **Input**: gross salary, 6 deduction fields
-- **Output**: Old regime vs New regime comparison, missed deductions, recommendation
-- **Math**: FY 2025-26 exact slabs (Old + New), 4% education cess, rebates u/s 87A
-- **AI layer**: Specific 2-step action plan for next financial year
+- **Input**: gross salary + 6 deduction fields
+- **Output**: Old vs New comparison, missed deductions, AI recommendation
 
-### 5. Voice Agent (`api/voice.py`)
-- **Input**: audio file (webm/wav/mp3, max 25MB)
-- **Output**: transcript text
-- **Model**: `whisper-large-v3` — multilingual, Hindi + English
+### 5. Goal Agent (`api/goals.py`)
+- **Input**: list of financial goals with targets and timelines
+- **Output**: Per-goal SIP needed, projection, AI strategy
 
-### 6. Session Agent (`api/session.py` + `services/gist_client.py`)
-- **Input**: session UUID (stored in browser localStorage)
-- **Output**: read/write JSON to private GitHub Gist
-- **Auto-setup**: Creates Gist on first run, saves ID to `.env`
-- **Privacy**: No PII stored — only financial profile numbers
+### 6. Spending Agent (`api/spending.py`)
+- **Input**: monthly income + 10-category spending breakdown
+- **Output**: 50/30/20 analysis, over-budget alerts, AI audit
+
+### 7. Report Agent (`api/report.py`)
+- **Input**: BMS score data
+- **Output**: PDF with watermark, disclaimer, score ring, dimension bars, recommendations
+
+### 8. Voice Agent (`api/voice.py`)
+- **Input**: audio file (webm/wav/mp3)
+- **Output**: transcript via Whisper
+
+### 9. Session Agent (`api/session.py`)
+- **Input**: session UUID
+- **Output**: CRUD on private GitHub Gist
 
 ---
 
-## Data Flow: BMS Score Request
+## Data Flow: Agentic Chat Request
 
 ```
-User submits 12-field form
+User types: "10000 ka SIP 20 saal mein kitna banega?"
          │
          ▼
-POST /api/score  (FastAPI, async)
+POST /api/chat  (messages + context)
          │
-         ├─ indian_finance.calc_bms_score()   [pure Python, <1ms]
-         │      └── weighted score across 6 dimensions
+         ├─ groq.chat_with_tools()     [Llama 3.3, ~400ms]
+         │      └── LLM returns tool_call: calculate_sip(10000, 20, 12.0)
          │
-         ├─ indian_finance.match_govt_schemes()  [rule-based, <1ms]
+         ├─ _execute_tool()            [Python, <1ms]
+         │      └── calc_sip(10000, 20, 12.0) → maturity: ₹99,91,479
          │
-         └─ groq_client.chat_complete()   [Llama 4 Scout, ~800ms]
-                  └── 3-sentence Hinglish summary
-         │
-         ▼
-JSON response → ScoreCard component → animated ring + dimension bars
-```
-
-## Data Flow: AI Chat (SSE)
-
-```
-User types message → Enter key
+         └─ groq.chat_stream()         [Llama 3.3, ~600ms]
+                  └── "Bhai, ₹10,000 ka SIP 20 saal mein ₹99.9L ban jaayega!"
          │
          ▼
-POST /api/chat  (body: message history + context)
-         │
-         ▼
-FastAPI StreamingResponse (text/event-stream)
-         │
-         ▼
-aiohttp → Groq API (stream=True)
-         │
-         └── for each chunk: yield "data: {token}\n\n"
-         │
-         ▼
-Browser EventSource → token appended to React state
-         │
-         ▼
-ReactMarkdown renders incrementally (typing effect)
+SSE stream → Browser → ReactMarkdown (typing effect)
 ```
 
 ---
@@ -125,13 +159,11 @@ ReactMarkdown renders incrementally (typing effect)
 
 | Integration | Method | Library |
 |---|---|---|
-| Groq LLM (chat) | HTTP POST + SSE | aiohttp |
-| Groq LLM (complete) | HTTP POST | aiohttp |
+| Groq LLM (function calling) | HTTP POST | aiohttp |
+| Groq LLM (streaming) | HTTP POST + SSE | aiohttp |
 | Groq Whisper | HTTP POST multipart | aiohttp |
-| GitHub Gist (read) | HTTP GET | aiohttp |
-| GitHub Gist (write) | HTTP PATCH | aiohttp |
-
-All external HTTP calls use `aiohttp.ClientSession` with async/await — no blocking IO.
+| GitHub Gist (CRUD) | HTTP GET/PATCH | aiohttp |
+| PDF Generation | ReportLab Canvas | reportlab |
 
 ---
 
@@ -139,12 +171,15 @@ All external HTTP calls use `aiohttp.ClientSession` with async/await — no bloc
 
 | Layer | Strategy |
 |---|---|
+| Tool call fails | Falls back to regular streaming (no tools) |
 | Groq API 429 | Log + return error event in SSE stream |
-| Groq API 5xx | Catch + return user-friendly error message |
+| Groq API 5xx | Catch + user-friendly error message |
+| Tool execution error | Returns error JSON to LLM, LLM explains gracefully |
+| PDF generation fails | HTTP 500 with detail message |
 | Gist write fail | Log warning, session data lost gracefully |
-| Frontend SSE disconnect | EventSource auto-reconnects (built-in) |
-| Voice upload fail | Error state displayed, user told to type instead |
+| Voice upload fail | Error state, user told to type instead |
 | Missing env vars | `config.py` raises on import, server won't start |
+| Frontend SSE disconnect | EventSource auto-reconnects |
 
 ---
 
@@ -165,43 +200,29 @@ All external HTTP calls use `aiohttp.ClientSession` with async/await — no bloc
 |---|---|
 | First contentful paint | < 1.2s (Vite + Nginx gzip) |
 | API response (score) | ~900ms (math + Groq summary) |
+| Agentic chat (with tool) | ~1.2s (tool call + stream) |
 | Chat first token | ~600ms (Groq fast inference) |
+| PDF generation | ~200ms (ReportLab) |
 | 3D orb (mobile) | 60fps on mid-range Android |
 | Bundle size (gzipped) | ~180KB initial, Three.js lazy-loaded |
 
 ---
 
-## Deployment Options
+## Frontend Architecture
 
-### Local (development)
-```bash
-python setup.py
 ```
-Starts uvicorn + Vite dev server automatically.
-
-### Docker (production)
-```bash
-python setup.py --build
+React 18 + Vite
+├── Three.js + @react-three/fiber  → 3D animated hero orb
+├── Framer Motion                  → page transitions + micro-animations
+├── Chart.js                       → Line, Bar, Doughnut charts
+├── Zustand                        → global state + localStorage persistence
+├── React Router v6                → SPA routing (7 pages)
+├── ReactMarkdown                  → AI response rendering
+├── i18n.js                        → 4-language support (EN/HI/TA/BN)
+├── Canvas API                     → Confetti animation
+└── PWA Install API                → beforeinstallprompt
 ```
-Builds backend + frontend containers, nginx proxy included.
-
-### Heroku + Vercel (cloud, free)
-- Backend → Heroku (Procfile + runtime.txt ready)
-- Frontend → Vercel or Netlify (static export)
 
 ---
 
-## Impact Quantification
-
-| Metric | Assumption | Value |
-|---|---|---|
-| Indians without financial plan | 95% of population | 133 crore |
-| Advisor cost | Market rate | ₹25,000/year |
-| Tax savings per user | Avg missed deduction | ₹8,000/year |
-| Time saved vs advisor visit | 5 min vs 4 hours | 98% reduction |
-| Infrastructure cost | Groq free + Gist free | ₹0 |
-| Time to first insight | Onboarding flow | < 5 minutes |
-
----
-
-*SmartSaathiAI — ET GenAI Hackathon 2026*
+*SmartSaathiAI v2.0 — ET GenAI Hackathon 2026*

@@ -90,6 +90,45 @@ class GroqClient:
                 data = await response.json()
                 return data["choices"][0]["message"]["content"]
 
+<<<<<<< HEAD
+=======
+    async def chat_with_tools(
+        self,
+        messages: list[dict],
+        tools: list[dict],
+        model: str = None,
+        temperature: float = 0.3,
+        max_tokens: int = 2048,
+        system_prompt: str = None,
+    ) -> dict:
+        """Non-streaming tool-calling. Returns the full response with possible tool_calls."""
+        model = model or settings.model_smart
+        payload_messages = []
+        if system_prompt:
+            payload_messages.append({"role": "system", "content": system_prompt})
+        payload_messages.extend(messages)
+
+        payload = {
+            "model": model,
+            "messages": payload_messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "stream": False,
+            "tools": tools,
+            "tool_choice": "auto",
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                f"{self.base_url}/chat/completions",
+                headers=self.headers,
+                json=payload,
+            ) as response:
+                response.raise_for_status()
+                data = await response.json()
+                return data["choices"][0]["message"]
+
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
     async def transcribe_audio(self, audio_bytes: bytes, filename: str = "audio.webm") -> str:
         form_data = aiohttp.FormData()
         form_data.add_field("file", audio_bytes, filename=filename, content_type="audio/webm")

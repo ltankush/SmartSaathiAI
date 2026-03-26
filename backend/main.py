@@ -11,7 +11,7 @@ import os
 sys.path.insert(0, os.path.dirname(__file__))
 
 from config import settings
-from api import chat, score, planner, tax, voice, session
+from api import chat, score, planner, tax, voice, session, report, goals, spending
 
 # Built React frontend lives here inside the Docker image
 STATIC_DIR = Path(__file__).parent / "static_frontend"
@@ -27,6 +27,8 @@ async def lifespan(app: FastAPI):
         print(f"  Gist DB connected: {gist_id[:8]}...")
     except Exception as e:
         print(f"  WARNING: Gist connection failed: {e}")
+    print("  Agentic tool-use enabled (5 financial tools)")
+    print("  PDF report generation enabled (ReportLab)")
     print("  All systems ready.")
     print("=" * 55)
     yield
@@ -35,8 +37,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="SmartSaathiAI API",
-    description="India's AI-powered personal finance mentor",
-    version="1.0.0",
+    description="India's AI-powered personal finance mentor — with agentic tool-use, PDF reports, goal planner, and spending analyzer.",
+    version="2.0.0",
     lifespan=lifespan,
     docs_url="/api/docs",
     redoc_url="/api/redoc",
@@ -55,12 +57,15 @@ app.add_middleware(
 )
 
 # ── API routes (always registered, prefix /api) ───────────────────────────────
-app.include_router(chat.router,    prefix="/api", tags=["Chat"])
-app.include_router(score.router,   prefix="/api", tags=["BMS Score"])
-app.include_router(planner.router, prefix="/api", tags=["FIRE Planner"])
-app.include_router(tax.router,     prefix="/api", tags=["Tax Optimizer"])
-app.include_router(voice.router,   prefix="/api", tags=["Voice"])
-app.include_router(session.router, prefix="/api", tags=["Session"])
+app.include_router(chat.router,     prefix="/api", tags=["Chat (Agentic)"])
+app.include_router(score.router,    prefix="/api", tags=["BMS Score"])
+app.include_router(planner.router,  prefix="/api", tags=["FIRE Planner"])
+app.include_router(tax.router,      prefix="/api", tags=["Tax Optimizer"])
+app.include_router(goals.router,    prefix="/api", tags=["Goal Planner"])
+app.include_router(spending.router, prefix="/api", tags=["Spending Analyzer"])
+app.include_router(report.router,   prefix="/api", tags=["PDF Reports"])
+app.include_router(voice.router,    prefix="/api", tags=["Voice"])
+app.include_router(session.router,  prefix="/api", tags=["Session"])
 
 
 @app.get("/api/health", tags=["Health"])
@@ -68,38 +73,43 @@ async def health():
     return {
         "status": "ok",
         "app": "SmartSaathiAI",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "env": settings.app_env,
         "frontend_bundled": STATIC_DIR.exists(),
+        "features": [
+            "agentic_tool_use",
+            "pdf_report_generation",
+            "goal_based_planner",
+            "spending_analyzer",
+            "sse_streaming_chat",
+            "voice_input_whisper",
+            "bms_score",
+            "fire_planner",
+            "tax_optimizer",
+        ],
     }
 
 
 # ── Static frontend (only present in Docker production build) ─────────────────
-# The Dockerfile copies the Vite build output into static_frontend/.
-# Structure:  static_frontend/index.html
-#             static_frontend/assets/  (JS, CSS, fonts)
-#             static_frontend/manifest.json  etc.
-#
-# Mount order matters in FastAPI:
-#   1. /api  routes registered above — handled first, never fall through
-#   2. /assets  static mount — serves hashed JS/CSS bundles efficiently
-#   3. catch-all  — serves index.html for ALL other paths (React Router SPA)
-
 if STATIC_DIR.exists():
-    # Serve Vite's hashed asset bundle (JS, CSS, fonts, images)
     app.mount(
         "/assets",
         StaticFiles(directory=str(STATIC_DIR / "assets")),
         name="vite-assets",
     )
 
-    # Serve any other static file at the root (manifest.json, favicon, etc.)
-    # If the file exists on disk, send it directly. Otherwise fall through to SPA.
     @app.get("/{file_path:path}", include_in_schema=False)
     async def serve_spa(file_path: str):
-        # Try to serve a real file first (manifest.json, favicon.ico, etc.)
         candidate = STATIC_DIR / file_path
         if candidate.exists() and candidate.is_file():
             return FileResponse(str(candidate))
-        # Everything else → index.html  (React Router handles the routing)
         return FileResponse(str(STATIC_DIR / "index.html"))
+else:
+    @app.get("/", include_in_schema=False)
+    async def backend_only_root():
+        return {
+            "status": "ok",
+            "message": "Backend is running. Frontend bundle is not present in this deployment.",
+            "health": "/api/health",
+            "docs": "/api/docs",
+        }

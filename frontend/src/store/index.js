@@ -12,6 +12,12 @@ const useStore = create(
       taxResult: null,
       chatHistory: [],
       isLoading: false,
+<<<<<<< HEAD
+=======
+      language: 'en',
+      goals: [],
+      spendingResult: null,
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
 
       initSession: async () => {
         const existing = get().sessionId
@@ -28,12 +34,21 @@ const useStore = create(
       },
 
       setProfile: (profile) => set({ profile }),
+<<<<<<< HEAD
 
       setBmsScore: (score) => set({ bmsScore: score }),
 
       setFirePlan: (plan) => set({ firePlan: plan }),
 
       setTaxResult: (result) => set({ taxResult: result }),
+=======
+      setBmsScore: (score) => set({ bmsScore: score }),
+      setFirePlan: (plan) => set({ firePlan: plan }),
+      setTaxResult: (result) => set({ taxResult: result }),
+      setLanguage: (lang) => set({ language: lang }),
+      setGoals: (goals) => set({ goals }),
+      setSpendingResult: (result) => set({ spendingResult: result }),
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
 
       addChatMessage: (message) =>
         set((state) => ({
@@ -53,7 +68,10 @@ const useStore = create(
         }),
 
       clearChat: () => set({ chatHistory: [] }),
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
       setLoading: (v) => set({ isLoading: v }),
 
       reset: () =>
@@ -64,6 +82,11 @@ const useStore = create(
           firePlan: null,
           taxResult: null,
           chatHistory: [],
+<<<<<<< HEAD
+=======
+          goals: [],
+          spendingResult: null,
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
         }),
     }),
     {
@@ -74,6 +97,10 @@ const useStore = create(
         bmsScore: state.bmsScore,
         firePlan: state.firePlan,
         taxResult: state.taxResult,
+<<<<<<< HEAD
+=======
+        language: state.language,
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
       }),
     }
   )

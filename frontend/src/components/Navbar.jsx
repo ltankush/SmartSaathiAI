@@ -1,12 +1,26 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BarChart3, Target, Calculator, MessageCircle, Menu, X, Sparkles } from 'lucide-react'
+=======
+import React, { useState, useEffect, useRef } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import { BarChart3, Target, Calculator, MessageCircle, Menu, X, Sparkles, Goal, Wallet, Globe } from 'lucide-react'
+import useStore from '@/store'
+import { LANGUAGE_LABELS, LANGUAGE_NAMES } from '@/utils/i18n'
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
 
 const NAV = [
   { to: '/score', label: 'BMS Score', icon: BarChart3 },
   { to: '/planner', label: 'FIRE Planner', icon: Target },
   { to: '/tax', label: 'Tax Optimizer', icon: Calculator },
+<<<<<<< HEAD
+=======
+  { to: '/goals', label: 'Goals', icon: Goal },
+  { to: '/spending', label: 'Spending', icon: Wallet },
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
   { to: '/chat', label: 'AI Chat', icon: MessageCircle },
 ]
 
@@ -14,6 +28,13 @@ export default function Navbar() {
   const location = useLocation()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+<<<<<<< HEAD
+=======
+  const [langOpen, setLangOpen] = useState(false)
+  const language = useStore((s) => s.language)
+  const setLanguage = useStore((s) => s.setLanguage)
+  const langRef = useRef(null)
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20)
@@ -23,6 +44,16 @@ export default function Navbar() {
 
   useEffect(() => setOpen(false), [location.pathname])
 
+<<<<<<< HEAD
+=======
+  // Close lang dropdown on outside click
+  useEffect(() => {
+    const fn = (e) => { if (langRef.current && !langRef.current.contains(e.target)) setLangOpen(false) }
+    document.addEventListener('mousedown', fn)
+    return () => document.removeEventListener('mousedown', fn)
+  }, [])
+
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -42,36 +73,95 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop nav */}
+<<<<<<< HEAD
         <nav className="hidden md:flex items-center gap-1">
+=======
+        <nav className="hidden lg:flex items-center gap-1">
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
           {NAV.map(({ to, label, icon: Icon }) => {
             const active = location.pathname === to
             return (
               <Link
                 key={to}
                 to={to}
+<<<<<<< HEAD
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+=======
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 ${
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
                   active
                     ? 'bg-brand-500/10 text-brand-400 border border-brand-500/20'
                     : 'text-[#8b949e] hover:text-[#e6edf3] hover:bg-white/5'
                 }`}
               >
+<<<<<<< HEAD
                 <Icon size={15} />
+=======
+                <Icon size={14} />
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
                 {label}
               </Link>
             )
           })}
         </nav>
 
+<<<<<<< HEAD
         {/* CTA desktop */}
         <div className="hidden md:flex items-center gap-3">
           <Link to="/score" className="btn-primary text-sm py-2 px-4 rounded-lg">
+=======
+        {/* Right side: Language + CTA */}
+        <div className="hidden lg:flex items-center gap-2">
+          {/* Language selector */}
+          <div ref={langRef} className="relative">
+            <button
+              onClick={() => setLangOpen(!langOpen)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-[#8b949e] hover:text-white hover:bg-white/5 transition-all border border-transparent hover:border-white/10"
+            >
+              <Globe size={13} />
+              {LANGUAGE_LABELS[language]}
+            </button>
+            <AnimatePresence>
+              {langOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -4, scale: 0.95 }}
+                  transition={{ duration: 0.12 }}
+                  className="absolute right-0 top-full mt-1 bg-[#161b22] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 min-w-[120px]"
+                >
+                  {Object.entries(LANGUAGE_NAMES).map(([code, name]) => (
+                    <button
+                      key={code}
+                      onClick={() => { setLanguage(code); setLangOpen(false) }}
+                      className={`w-full text-left px-4 py-2.5 text-xs transition-colors flex items-center justify-between ${
+                        language === code
+                          ? 'bg-brand-500/10 text-brand-400'
+                          : 'text-[#8b949e] hover:bg-white/5 hover:text-white'
+                      }`}
+                    >
+                      {name}
+                      <span className="text-[10px] opacity-50">{LANGUAGE_LABELS[code]}</span>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <Link to="/score" className="btn-primary text-xs py-2 px-4 rounded-lg">
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
             Get Your Score
           </Link>
         </div>
 
         {/* Mobile hamburger */}
         <button
+<<<<<<< HEAD
           className="md:hidden p-2 rounded-lg text-[#8b949e] hover:text-white hover:bg-white/5 transition-colors"
+=======
+          className="lg:hidden p-2 rounded-lg text-[#8b949e] hover:text-white hover:bg-white/5 transition-colors"
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
@@ -87,7 +177,11 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.15 }}
+<<<<<<< HEAD
             className="md:hidden bg-[#0d1117]/95 backdrop-blur-xl border-b border-white/5 px-4 pb-4"
+=======
+            className="lg:hidden bg-[#0d1117]/95 backdrop-blur-xl border-b border-white/5 px-4 pb-4"
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
           >
             {NAV.map(({ to, label, icon: Icon }) => {
               const active = location.pathname === to
@@ -104,6 +198,26 @@ export default function Navbar() {
                 </Link>
               )
             })}
+<<<<<<< HEAD
+=======
+            {/* Mobile language row */}
+            <div className="flex items-center gap-2 px-4 py-2 mt-1">
+              <Globe size={14} className="text-[#484f58]" />
+              {Object.entries(LANGUAGE_LABELS).map(([code, label]) => (
+                <button
+                  key={code}
+                  onClick={() => setLanguage(code)}
+                  className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all ${
+                    language === code
+                      ? 'bg-brand-500/15 text-brand-400 border border-brand-500/30'
+                      : 'text-[#484f58] hover:text-white'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+>>>>>>> 1b68d14 (feat: v2.0 — Agentic AI, PDF reports, goal planner, spending analyzer, 3D animations, multi-language, hackathon-ready)
             <Link to="/score" className="btn-primary w-full text-center mt-2 block">
               Get Your Score Free
             </Link>
