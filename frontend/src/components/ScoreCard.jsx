@@ -12,61 +12,72 @@ const DIMS = [
 
 function useConfetti() {
   const canvasRef = useRef(null)
+  const [showCanvas, setShowCanvas] = useState(false)
+
   const fire = useCallback(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
-    const particles = []
-    const colors = ['#13b88e', '#5de8c3', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899', '#22c55e', '#ffffff']
-    for (let i = 0; i < 150; i++) {
-      particles.push({
-        x: canvas.width / 2 + (Math.random() - 0.5) * 200,
-        y: canvas.height / 2,
-        vx: (Math.random() - 0.5) * 20,
-        vy: -Math.random() * 18 - 5,
-        size: Math.random() * 8 + 3,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        rotation: Math.random() * 360,
-        vr: (Math.random() - 0.5) * 12,
-        gravity: 0.4,
-        opacity: 1,
-        shape: Math.random() > 0.5 ? 'rect' : 'circle',
-      })
-    }
-    let frame = 0
-    const maxFrames = 120
-    function animate() {
-      if (frame > maxFrames) { ctx.clearRect(0, 0, canvas.width, canvas.height); return }
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      for (const p of particles) {
-        p.x += p.vx
-        p.vy += p.gravity
-        p.y += p.vy
-        p.rotation += p.vr
-        p.opacity = Math.max(0, 1 - frame / maxFrames)
-        p.vx *= 0.98
-        ctx.save()
-        ctx.globalAlpha = p.opacity
-        ctx.translate(p.x, p.y)
-        ctx.rotate((p.rotation * Math.PI) / 180)
-        ctx.fillStyle = p.color
-        if (p.shape === 'rect') {
-          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6)
-        } else {
-          ctx.beginPath()
-          ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2)
-          ctx.fill()
-        }
-        ctx.restore()
+    setShowCanvas(true)
+    // Wait for React to mount the canvas
+    requestAnimationFrame(() => {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      const ctx = canvas.getContext('2d')
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+      const particles = []
+      const colors = ['#13b88e', '#5de8c3', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899', '#22c55e', '#ffffff']
+      for (let i = 0; i < 150; i++) {
+        particles.push({
+          x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+          y: canvas.height / 2,
+          vx: (Math.random() - 0.5) * 20,
+          vy: -Math.random() * 18 - 5,
+          size: Math.random() * 8 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vr: (Math.random() - 0.5) * 12,
+          gravity: 0.4,
+          opacity: 1,
+          shape: Math.random() > 0.5 ? 'rect' : 'circle',
+        })
       }
-      frame++
-      requestAnimationFrame(animate)
-    }
-    animate()
+      let frame = 0
+      const maxFrames = 120
+      function animate() {
+        if (frame > maxFrames) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          setShowCanvas(false) // Remove canvas from DOM when done
+          return
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        for (const p of particles) {
+          p.x += p.vx
+          p.vy += p.gravity
+          p.y += p.vy
+          p.rotation += p.vr
+          p.opacity = Math.max(0, 1 - frame / maxFrames)
+          p.vx *= 0.98
+          ctx.save()
+          ctx.globalAlpha = p.opacity
+          ctx.translate(p.x, p.y)
+          ctx.rotate((p.rotation * Math.PI) / 180)
+          ctx.fillStyle = p.color
+          if (p.shape === 'rect') {
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6)
+          } else {
+            ctx.beginPath()
+            ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2)
+            ctx.fill()
+          }
+          ctx.restore()
+        }
+        frame++
+        requestAnimationFrame(animate)
+      }
+      animate()
+    })
   }, [])
-  return { canvasRef, fire }
+
+  return { canvasRef, fire, showCanvas }
 }
 
 function CircularProgress({ score, tierColor, size = 200 }) {
@@ -173,8 +184,7 @@ function DimensionBar({ label, value, color, delay = 0 }) {
 }
 
 export default function ScoreCard({ scoreData }) {
-  // Hooks MUST be called before any early return (React rules of hooks)
-  const { canvasRef, fire } = useConfetti()
+  const { canvasRef, fire, showCanvas } = useConfetti()
   const hasFired = useRef(false)
 
   const total = scoreData?.total ?? 0
@@ -189,7 +199,6 @@ export default function ScoreCard({ scoreData }) {
     }
   }, [total, fire])
 
-  // Early return AFTER all hooks
   if (!scoreData) return null
 
   const isLowScore = total < 40
@@ -199,11 +208,16 @@ export default function ScoreCard({ scoreData }) {
 
   return (
     <>
-      <canvas
-        ref={canvasRef}
-        className="fixed inset-0 pointer-events-none z-[100]"
-        style={{ width: '100vw', height: '100vh' }}
-      />
+      {/* Canvas only mounts during confetti animation, then unmounts to prevent black overlay */}
+      {showCanvas && (
+        <canvas
+          ref={canvasRef}
+          className="fixed inset-0 pointer-events-none z-[100]"
+          width={window.innerWidth}
+          height={window.innerHeight}
+          style={{ width: '100vw', height: '100vh', background: 'transparent' }}
+        />
+      )}
       <motion.div
         initial={{ opacity: 0, y: 24, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
