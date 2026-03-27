@@ -202,9 +202,6 @@ export default function ScoreCard({ scoreData }) {
   if (!scoreData) return null
 
   const isLowScore = total < 40
-  const shakeProps = isLowScore
-    ? { animate: { x: [0, -4, 4, -3, 3, -1, 1, 0] }, transition: { duration: 0.5, delay: 1.5 } }
-    : {}
 
   return (
     <>
@@ -218,10 +215,9 @@ export default function ScoreCard({ scoreData }) {
       />
       <motion.div
         initial={{ opacity: 0, y: 24, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
+        animate={{ opacity: 1, y: 0, scale: 1, x: isLowScore ? [0, -4, 4, -3, 3, -1, 1, 0] : 0 }}
         transition={{ duration: 0.6 }}
         className="card card-glow max-w-xl mx-auto relative overflow-hidden"
-        {...shakeProps}
       >
         <div className="flex items-center justify-between mb-6 relative">
           <div>
