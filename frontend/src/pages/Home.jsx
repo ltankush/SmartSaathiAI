@@ -1,4 +1,5 @@
-import React, { Suspense, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import ErrorBoundary from '@/components/ErrorBoundary'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BarChart3, Target, Calculator, MessageCircle, ShieldCheck, Zap, Globe, ArrowRight, TrendingUp, Users, Star, Goal, Wallet, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -131,7 +132,7 @@ export default function Home() {
             </div>
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.2 }} className="hidden lg:block">
-            <Suspense fallback={<div className="w-full h-[420px] rounded-3xl bg-[#0d1117]" />}><HeroOrb className="w-full h-[420px]" /></Suspense>
+            <ErrorBoundary fallback={<div className="w-full h-[420px] rounded-3xl bg-[#0d1117]" />}><HeroOrb className="w-full h-[420px]" /></ErrorBoundary>
           </motion.div>
         </div>
       </section>
