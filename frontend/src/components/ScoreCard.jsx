@@ -12,7 +12,21 @@ const DIMS = [
 
 function useConfetti() {
   const canvasRef = useRef(null)
+  const animationFrameRef = useRef(null)
   const [showCanvas, setShowCanvas] = useState(false)
+
+  const stop = useCallback(() => {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current)
+      animationFrameRef.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      stop()
+    }
+  }, [stop])
 
   const fire = useCallback(() => {
     setShowCanvas(true)
@@ -28,7 +42,7 @@ function useConfetti() {
       for (let i = 0; i < 150; i++) {
         particles.push({
           x: canvas.width / 2 + (Math.random() - 0.5) * 200,
-          y: canvas.height / 2,
+          y: Math.max(0, canvas.height / 2 - 100),
           vx: (Math.random() - 0.5) * 20,
           vy: -Math.random() * 18 - 5,
           size: Math.random() * 8 + 3,
@@ -45,7 +59,7 @@ function useConfetti() {
       function animate() {
         if (frame > maxFrames) {
           ctx.clearRect(0, 0, canvas.width, canvas.height)
-          setShowCanvas(false) // Remove canvas from DOM when done
+          setShowCanvas(false)
           return
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -71,11 +85,12 @@ function useConfetti() {
           ctx.restore()
         }
         frame++
-        requestAnimationFrame(animate)
+        animationFrameRef.current = requestAnimationFrame(animate)
       }
+      stop() // stop any existing
       animate()
     })
-  }, [])
+  }, [stop])
 
   return { canvasRef, fire, showCanvas }
 }

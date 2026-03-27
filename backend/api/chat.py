@@ -260,6 +260,29 @@ async def chat_stream(req: ChatRequest):
 
             tool_calls = tool_response.get("tool_calls")
 
+            # Fallback for Llama 3 inline function tags if native generic tool_calls fail
+            content = tool_response.get("content", "")
+            if not tool_calls and content and "<function=" in content:
+                import re
+                match = re.search(r'<function=([^>]+)>(.*?)</function>', content, re.DOTALL)
+                if match:
+                    try:
+                        fn_name = match.group(1).strip()
+                        fn_args_str = match.group(2).strip()
+                        json.loads(fn_args_str)  # validate JSON
+                        tool_calls = [{
+                            "id": f"call_{fn_name}",
+                            "type": "function",
+                            "function": {
+                                "name": fn_name,
+                                "arguments": fn_args_str
+                            }
+                        }]
+                        # Remove the function call text from content, so we just show the remaining reasoning
+                        tool_response["content"] = content.replace(match.group(0), "").strip()
+                    except Exception:
+                        pass # Ignore malformed json and let it stream normally
+
             if tool_calls:
                 # Execute all tool calls
                 tool_messages = list(messages)
