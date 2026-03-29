@@ -2,6 +2,10 @@
 
 > **India's Agentic AI Personal Finance Mentor** — Built for the ET GenAI Hackathon 2026
 
+> **Live Demo:** https://smartsaathi-ai.ltankush.me/
+
+> **Demo Video in HD:** https://transfer.it/t/t6411ioVwRpS (357MB Please Check it Out.)
+
 SmartSaathiAI is a full-stack agentic AI web application that gives every Indian access to a personalised financial advisor — completely free. Unlike traditional chatbots, it uses **real-time function calling** to execute actual financial calculations and return exact numbers, explained in friendly Hinglish.
 
 ---
@@ -209,7 +213,7 @@ All endpoints at `/api/...`. Interactive docs: `http://localhost:8000/api/docs`
 - [x] **Commit History** — Shows build process
 - [x] **Architecture Document** — Agent roles, tool integrations, error handling
 - [x] **Impact Model** — Quantified estimates with assumptions
-- [x] **Demo Script** — 3-minute pitch video guide
+- [x] **Demo Script** — [3-minute pitch video guide](https://transfer.it/t/t6411ioVwRpS) (357MB Please Check it Out.)
 
 ---
 
@@ -222,3 +226,16 @@ MIT — Free to use, modify, and distribute.
 *SmartSaathiAI v2.0 — ET GenAI Hackathon 2026 · Powered by Groq + Llama + FastAPI*
 
 *Investments mein risk hota hai. Past returns guarantee nahi dete. Always consult a SEBI-registered advisor for large financial decisions.*
+
+---
+### Note
+
+**This is just a demo Project for ET GenAI Hackathon 2026 If you wanna contribute to this project you can fork this repository and make your changes and then submit a pull request. I will review it and if it is good I will merge it and Change your Variables or API Keys, Database or anything.**
+
+**Thank you for checking out my project. I hope you liked it.**
+
+**If you have any questions or suggestions, feel free to open an issue or submit a pull request.**
+
+**Happy Coding!**
+
+---
